@@ -1,5 +1,4 @@
 import ReleaseTransformations._
-import microsites.ExtraMdFileConfig
 import org.scalajs.sbtplugin.cross.{ CrossProject, CrossType }
 import scala.xml.{ Elem, Node => XmlNode, NodeSeq => XmlNodeSeq }
 import scala.xml.transform.{ RewriteRule, RuleTransformer }
@@ -109,27 +108,6 @@ def noDocProjects(sv: String): Seq[ProjectReference] = {
 }
 
 lazy val docSettings = allSettings ++ Seq(
-  micrositeName := "circe",
-  micrositeDescription := "A JSON library for Scala powered by Cats",
-  micrositeAuthor := "Travis Brown",
-  micrositeHighlightTheme := "atom-one-light",
-  micrositeHomepage := "https://circe.github.io/circe/",
-  micrositeBaseUrl := "circe",
-  micrositeDocumentationUrl := "api",
-  micrositeGithubOwner := "circe",
-  micrositeGithubRepo := "circe",
-  micrositeExtraMdFiles := Map(file("CONTRIBUTING.md") -> ExtraMdFileConfig("contributing.md", "docs")),
-  micrositePalette := Map(
-    "brand-primary" -> "#5B5988",
-    "brand-secondary" -> "#292E53",
-    "brand-tertiary" -> "#222749",
-    "gray-dark" -> "#49494B",
-    "gray" -> "#7B7B7E",
-    "gray-light" -> "#E5E5E6",
-    "gray-lighter" -> "#F4F3F4",
-    "white-color" -> "#FFFFFF"),
-  addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), micrositeDocumentationUrl),
-  ghpagesNoJekyll := false,
   scalacOptions in (ScalaUnidoc, unidoc) ++= Seq(
     "-groups",
     "-implicits",
@@ -141,10 +119,8 @@ lazy val docSettings = allSettings ++ Seq(
   scalacOptions ~= {
     _.filterNot(Set("-Yno-predef"))
   },
-  git.remoteRepo := "git@github.com:circe/circe.git",
   unidocProjectFilter in (ScalaUnidoc, unidoc) :=
-    inAnyProject -- inProjects(noDocProjects(scalaVersion.value): _*),
-  includeFilter in makeSite := "*.html" | "*.css" | "*.png" | "*.jpg" | "*.gif" | "*.svg" | "*.js" | "*.swf" | "*.yml" | "*.md"
+    inAnyProject -- inProjects(noDocProjects(scalaVersion.value): _*)
 )
 
 lazy val docs = project.dependsOn(core, genericExtras, parser, optics)
@@ -157,8 +133,6 @@ lazy val docs = project.dependsOn(core, genericExtras, parser, optics)
   .settings(
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.patch)
   )
-  .enablePlugins(GhpagesPlugin)
-  .enablePlugins(MicrositesPlugin)
   .enablePlugins(ScalaUnidocPlugin)
 
 lazy val circeCrossModules = Seq[(Project, Project)](
